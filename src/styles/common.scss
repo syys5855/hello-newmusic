@@ -1,0 +1,35 @@
+@import './variable';
+%full {
+    height: 100%;
+    width: 100%;
+}
+
+$ft-xlg:20px;
+$ft-lg:18px;
+$ft-m:16px;
+$ft-sm:14px;
+$ft-xsm:13px;
+$ft-xxsm:12px;
+.ft-xlg {
+    font-size: $ft-xlg;
+}
+
+.ft-lg {
+    font-size: $ft-lg;
+}
+
+.ft-m {
+    font-size: $ft-m;
+}
+
+.ft-sm {
+    font-size: $ft-sm;
+}
+
+.ft-xsm {
+    font-size: $ft-xsm;
+}
+
+.ft-xxsm {
+    font-size: $ft-xxsm;
+}
