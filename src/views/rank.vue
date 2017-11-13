@@ -57,7 +57,8 @@ export default {
   methods: {
     ...mapActions(["getPlaylist"])
   },
-  mounted() {
+  created() {
+    console.log('rank.vue created');
     this.getPlaylist();
   }
 };

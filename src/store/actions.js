@@ -18,13 +18,12 @@ export default {
             commit("getPlaylist", { playlists: data.playlists });
         })
     },
-    getPlaylistDetail({ commit }, { id }) {
-        axios({
+    async getPlaylistDetail({ commit }, { id }) {
+        let response = await axios({
             method: 'GET',
             url: 'https://api.imjad.cn/cloudmusic/?type=playlist&id=' + id
-        }).then(response => {
-            let data = handleResponse(response);
-            commit("getPlaylistDetail", { playlistDetail: data.playlist });
-        })
+        });
+        let data = handleResponse(response);
+        commit("getPlaylistDetail", { playlistDetail: data.playlist });
     }
 }

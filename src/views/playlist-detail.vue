@@ -1,12 +1,13 @@
 <template>
   <div>
-      <div class="operator-bar">
+      <div class="operator-bar" :class='{"active":fold}'>
         <div class="icon-wrap">
           <i class="fa fa-chevron-left" @click="back"></i>
         </div>
-        <span>back</span>
+        <span>{{fold?playlistDetail.name:'back'}}</span>
+        <div class="content-bg" :style="barStyle" ></div>
       </div>
-      <div class="content-wrap">
+      <div class="content-wrap" ref="content">
         <div class="content">
           <div class="cover-wrap">
               <playlist :cover="playlistDetail.coverImgUrl"  :played="playlistDetail.playCount" ></playlist>
@@ -35,7 +36,10 @@ import Playlist from "@components/playlist";
 export default {
   data() {
     return {
-      id: 0
+      id: 0,
+      barStyle: {},
+      fold: false,
+      headBarTitle: "back"
     };
   },
   components: { Songlist, Playlist },
@@ -48,18 +52,40 @@ export default {
       this.$router.go(-1);
     }
   },
-  created() {
+  mounted() {
     let params = this.$route.params;
-    let id = params.id;
+    let id = params.id,
+      conEl = this.$refs.content,
+      that = this;
+
     id && this.getPlaylistDetail({ id });
     this.id = id;
-    console.log('created');
+
+    console.log("mounted", conEl);
+
+    conEl.onscroll = function() {
+      if (this.scrollTop - 140 > 0) {
+        that.barStyle = {
+          "background-image": `url(${that.playlistDetail.coverImgUrl})`,
+          filter: "blur(10px)"
+        };
+        that.fold = true;
+      } else {
+        that.barStyle = {};
+        that.fold = false;
+      }
+    };
   },
   beforeRouteEnter: (to, from, next) => {
     next(vm => {
-      console.log(to.params.id, ~~vm.id,to.params);
+      vm.fold = false;
+      vm.barStyle = {};
+
       if (~~vm.id !== to.params.id) {
-        vm.getPlaylistDetail({ id: ~~to.params.id });
+        console.log(`difference id now is ${vm.id} feture is ${to.params.id}`);
+        vm.getPlaylistDetail({ id: ~~to.params.id }).then(() => {
+          vm.id = ~~to.params.id;
+        });
       }
     });
   }
@@ -75,29 +101,38 @@ export default {
   z-index: 10;
   width: 100%;
   height: 50px;
+  overflow: hidden;
   display: flex;
   align-items: center;
   padding: 0 15px;
   .icon-wrap {
     width: 35px;
   }
+  &.active {
+    color: #fff;
+  }
 }
+
+.content-bg {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  filter: blur(40px);
+  z-index: -1;
+}
+
 .content-wrap {
-  margin-top: 50px;
+  padding-top: 50px;
+  height: 100vh;
+  overflow: scroll;
+  -webkit-overflow-scrolling: touch;
   .content {
     position: relative;
     display: flex;
     padding: 0 20px;
-    .content-bg {
-      position: absolute;
-      left: 0;
-      top: 0;
-      width: 100%;
-      height: 100%;
-      background-size: cover;
-      filter: blur(40px);
-      z-index: -1;
-    }
   }
   .cover-wrap {
     width: $playlistCoverW;
